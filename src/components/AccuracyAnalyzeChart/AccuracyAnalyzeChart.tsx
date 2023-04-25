@@ -16,7 +16,7 @@ export const AccuracyAnalyzeChart: React.FC<AccuracyAnalyzeChartProps> = ({ data
       <Tooltip />
       <Legend />
       <Bar dataKey='freq' fill='#8884d8' />
-      <Bar dataKey='required' fill='#82ca9d' />
+      <Bar dataKey='expectation' fill='#82ca9d' />
     </BarChart>
   );
 };
