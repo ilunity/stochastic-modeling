@@ -77,10 +77,10 @@ export const AccuracyAnalyze: React.FC<AccuracyAnalyzeProps> = () => {
         </Typography>
         <Stack direction={'row'}>
           <Typography>
-            {round(chiSquared, 5)} {chiSquaredTest ? '>' : '<'} {criticalValue} is
+            Chi-squared: {round(chiSquared, 5)} {chiSquaredTest ? '>' : '<'} {criticalValue} is
           </Typography>
           <Typography sx={{ color: chiSquaredTest ? 'red' : 'green', ml: 1 }}>
-            {chiSquaredTest ? 'true' : 'false'}
+             {chiSquaredTest ? 'true' : 'false'}
           </Typography>
         </Stack>
       </Stack>
