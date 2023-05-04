@@ -1,7 +1,7 @@
 export interface AccuracyChartData {
   name: string;
   freq: number;
-  required: number;
+  expectation: number;
 }
 
 export interface AccuracyAnalyzeChartProps {

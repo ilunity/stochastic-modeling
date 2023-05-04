@@ -19,7 +19,7 @@ export const App: React.FC = () => {
       <CssBaseline />
       <Box
         sx={{
-          width: 1200,
+          width: 1250,
           margin: '0 auto',
           px: 10,
           minHeight: '100vh',
