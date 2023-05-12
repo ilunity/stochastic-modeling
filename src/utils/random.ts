@@ -1,3 +1,5 @@
+const { sqrt, log, sin, PI } = Math;
+
 type MultipleEvents = {
   probabilitiesArray: number[];
   arraySize?: undefined;
@@ -26,5 +28,9 @@ export abstract class Random {
     } while (A > 0);
 
     return i;
+  };
+  static normalDistribution = (mean: number, variance: number) => {
+    const base = sqrt(-2.0 * log(this.generate())) * sin(2.0 * PI * this.generate());
+    return base * sqrt(variance) + mean;
   };
 }

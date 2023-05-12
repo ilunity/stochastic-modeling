@@ -1,10 +1,12 @@
-export const calcExpectation = (probs: number[]) => {
+import { round } from './round';
+
+export const calcAppearancesExpectation = (probs: number[]) => {
   return probs.reduce((previousValue, appearances, index) => {
     return previousValue + appearances * (index + 1);
   }, 0);
 };
 
-export const calcVariance = (probs: number[], expectation: number) => {
+export const calcAppearancesVariance = (probs: number[], expectation: number) => {
   return Math.abs(
     probs.reduce((previousValue, appearances, index) => {
       return previousValue + appearances * (index + 1) ** 2;
@@ -24,7 +26,7 @@ interface IEmpChiSquaredParams {
   probs: number[];
 }
 
-export const calcEmpChiSquared = ({ chartStatistics, trials, probs }: IEmpChiSquaredParams) => {
+export const calcAppearancesEmpChiSquared = ({ chartStatistics, trials, probs }: IEmpChiSquaredParams) => {
   return chartStatistics.reduce((previousValue, appearances, index) => {
     return previousValue + (appearances - trials * probs[index]) ** 2 / (trials * probs[index]);
   }, 0);
@@ -33,5 +35,54 @@ export const calcEmpChiSquared = ({ chartStatistics, trials, probs }: IEmpChiSqu
 export const chiSquaredCriticalValues = [9.488, 13.277, 18.467];
 
 export const chiSquaredTest = (chiSquaredParams: IEmpChiSquaredParams, alphaLevel = 0) => {
-  return calcEmpChiSquared(chiSquaredParams) > chiSquaredCriticalValues[alphaLevel];
+  return calcAppearancesEmpChiSquared(chiSquaredParams) > chiSquaredCriticalValues[alphaLevel];
+};
+
+interface DefineIntervalsReturn {
+  stats: number[];
+  intervalNames: string[];
+}
+
+const INTERVALS_COUNT = 13;
+export const defineIntervals = (nums: number[]): DefineIntervalsReturn => {
+  const max = Math.max(...nums);
+  const min = Math.min(...nums);
+
+  const size = max - min;
+  const intervalSize = round(size / INTERVALS_COUNT);
+  const stats = Array(INTERVALS_COUNT).fill(0);
+
+  for (let num of nums) {
+    let intervalIndex = -1;
+    while (num >= min) {
+      num -= intervalSize;
+      intervalIndex++;
+    }
+
+    intervalIndex = intervalIndex >= INTERVALS_COUNT ? INTERVALS_COUNT - 1 : intervalIndex;
+    stats[intervalIndex]++;
+  }
+
+  const intervalNames = [];
+  for (let i = 0; i < INTERVALS_COUNT; i++) {
+    intervalNames.push(`
+      (${round(min + intervalSize * i)}; ${round(min + intervalSize * (i + 1))}]
+    `);
+  }
+
+  return { stats, intervalNames };
+};
+
+export const calcSum = (nums: number[]) => {
+  return nums.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+};
+
+export const calcAverage = (nums: number[]) => {
+  return calcSum(nums) / nums.length;
+};
+
+export const calcVariance = (nums: number[], average: number) => {
+  const squares = nums.map(value => value ** 2);
+  const squaresSum = calcSum(squares);
+  return Math.abs(squaresSum / nums.length - average ** 2);
 };

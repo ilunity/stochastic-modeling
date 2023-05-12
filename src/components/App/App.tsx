@@ -5,6 +5,7 @@ import { ANSWER_GENERATOR_TYPES } from '../AnswerGenerator/AnswerGenerator.types
 import { TabPanel } from '../TabPanel';
 import { lightBlue } from '@mui/material/colors';
 import { AccuracyAnalyze } from '../AccuracyAnalyze';
+import { NormalDistribution } from '../NormalDistribution';
 
 
 export const App: React.FC = () => {
@@ -31,6 +32,7 @@ export const App: React.FC = () => {
             <Tab label='Да/Нет генератор' value={'0'} />
             <Tab label='8Magic Ball' value={'1'} />
             <Tab label='Анализ точности' value={'2'} />
+            <Tab label='Нормальное распределение' value={'3'} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={'0'}>
@@ -41,6 +43,9 @@ export const App: React.FC = () => {
         </TabPanel>
         <TabPanel value={value} index={'2'}>
           <AccuracyAnalyze />
+        </TabPanel>
+        <TabPanel value={value} index={'3'}>
+          <NormalDistribution />
         </TabPanel>
       </Box>
     </Container>

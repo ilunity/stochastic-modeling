@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { AccuracyAnalyzeProps } from './AccuracyAnalyze.types';
 import { AccuracyAnalyzeChart } from '../AccuracyAnalyzeChart';
 import { AccuracyAnalyzeForm } from '../AccuracyAnalyzeForm';
 import { Stack, Typography } from '@mui/material';
@@ -8,15 +7,15 @@ import { AccuracyChartData } from '../AccuracyAnalyzeChart/AccuracyAnalyzeChart.
 import { Random } from '../../utils';
 import { round } from '../../utils/round';
 import {
-  calcEmpChiSquared,
-  calcExpectation,
+  calcAppearancesEmpChiSquared,
+  calcAppearancesExpectation,
+  calcAppearancesVariance,
   calcRelativeError,
-  calcVariance,
   chiSquaredCriticalValues,
 } from '../../utils/helpers';
 
 
-export const AccuracyAnalyze: React.FC<AccuracyAnalyzeProps> = () => {
+export const AccuracyAnalyze: React.FC = () => {
   const [chartData, setChartData] = useState<AccuracyChartData[]>([]);
   const [empExpectation, setEmpExpectation] = useState<number>(-1);
   const [empVariance, setEmpVariance] = useState<number>(-1);
@@ -36,16 +35,16 @@ export const AccuracyAnalyze: React.FC<AccuracyAnalyzeProps> = () => {
 
     const relativeFrequencies = chartStatistics.map(count => count / trials);
 
-    setEmpExpectation(calcExpectation(relativeFrequencies));
-    setEmpVariance(calcVariance(relativeFrequencies, empExpectation));
+    setEmpExpectation(calcAppearancesExpectation(relativeFrequencies));
+    setEmpVariance(calcAppearancesVariance(relativeFrequencies, empExpectation));
 
-    const mathExpectation = calcExpectation(probsArray);
-    const mathVariance = calcVariance(probsArray, mathExpectation);
+    const mathExpectation = calcAppearancesExpectation(probsArray);
+    const mathVariance = calcAppearancesVariance(probsArray, mathExpectation);
 
     setRelativeExpectationError(calcRelativeError(empExpectation, mathExpectation));
     setRelativeVarianceError(calcRelativeError(empVariance, mathVariance));
 
-    setChiSquared(calcEmpChiSquared({ chartStatistics, probs: probsArray, trials }));
+    setChiSquared(calcAppearancesEmpChiSquared({ chartStatistics, probs: probsArray, trials }));
     setCriticalValue(chiSquaredCriticalValues[0]);
 
     const chart: AccuracyChartData[] = chartStatistics.map((count, index) => ({
@@ -68,22 +67,24 @@ export const AccuracyAnalyze: React.FC<AccuracyAnalyzeProps> = () => {
         onSubmit={startTrials}
       />
       <AccuracyAnalyzeChart data={chartData} />
-      <Stack>
-        <Typography>
-          Average: {round(empExpectation)} (error: {round(relativeExpectationError * 100)}%)
-        </Typography>
-        <Typography>
-          Variance: {round(empVariance)} (error: {round(relativeVarianceError * 100)}%)
-        </Typography>
-        <Stack direction={'row'}>
+      {empExpectation &&
+        <Stack>
           <Typography>
-            Chi-squared: {round(chiSquared, 5)} {chiSquaredTest ? '>' : '<'} {criticalValue} is
+            Average: {round(empExpectation)} (error: {round(relativeExpectationError * 100)}%)
           </Typography>
-          <Typography sx={{ color: chiSquaredTest ? 'red' : 'green', ml: 1 }}>
-             {chiSquaredTest ? 'true' : 'false'}
+          <Typography>
+            Variance: {round(empVariance)} (error: {round(relativeVarianceError * 100)}%)
           </Typography>
+          <Stack direction={'row'}>
+            <Typography>
+              Chi-squared: {round(chiSquared, 5)} {chiSquaredTest ? '>' : '<'} {criticalValue} is
+            </Typography>
+            <Typography sx={{ color: chiSquaredTest ? 'red' : 'green', ml: 1 }}>
+              {chiSquaredTest ? 'true' : 'false'}
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
+      }
     </Stack>
   );
 };
